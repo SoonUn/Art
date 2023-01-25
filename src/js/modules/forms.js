@@ -44,9 +44,43 @@ const forms = () => {
             console.log(item.files[0]);
             let dots;
             const arr = item.files[0].name.split('.');
+            
             arr[0].length > 6 ? dots = '...' : dots = '.';//jshint ignore:line
             const name = arr[0].substring(0, 6) + dots + arr[1];
             item.previousElementSibling.textContent = name;
+        });
+    });
+
+    const fileInputs = document.querySelectorAll('[name="upload"]');
+
+    fileInputs.forEach(input => {
+        input.addEventListener('drop', (e) => {
+            input.files = e.dataTransfer.files;
+
+            let dots;
+            const arr = input.files[0].name.split('.');
+            
+            arr[0].length > 6 ? dots = '...' : dots = '.';//jshint ignore:line
+            const name = arr[0].substring(0, 6) + dots + arr[1];
+            input.previousElementSibling.textContent = name;
+
+            if (input.closest('.main')) {
+
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+
+                postData('assets/server.php', formData)
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(() => {
+                        console.log('Error');
+                    })
+                    .finally(() => {
+                        clearInputs();
+                    });
+                    
+            }
         });
     });
 
